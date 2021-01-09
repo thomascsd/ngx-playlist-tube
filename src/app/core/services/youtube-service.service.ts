@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { PlaylistDetail } from '../models/PlaylistDetail';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { TubeDetail } from '../models/TubeDetail';
 import { environment } from '../../../environments/environment.prod';
+import { AppToken } from '../models/AppToken';
 
 const appscopes = [
   encodeURIComponent('https://www.googleapis.com/auth/youtube'),
@@ -35,7 +38,7 @@ export class YoutubeServiceService {
     window.location.href = url;
   }
 
-  getToken(requestToken: string) {
+  getToken(requestToken: string): Observable<AppToken> {
     const url = 'https://www.googleapis.com/oauth2/v4/token';
 
     if (!requestToken) {
@@ -51,7 +54,19 @@ export class YoutubeServiceService {
       code: requestToken,
     };
 
-    return this.client.post<string>(url, body);
+    return this.client.post<any>(url, body).pipe(
+      map((data) => {
+        let time = new Date();
+        const hour = data.expires_in / (60 * 60);
+        time.setHours(time.getHours() + hour);
+
+        return {
+          token: data.access_token as string,
+          refreshToken: data.refresh_token as string,
+          expire: time,
+        } as AppToken;
+      })
+    );
   }
 
   isLogingIn() {
@@ -82,12 +97,12 @@ export class YoutubeServiceService {
     return false;
   }
 
-  reGetToken() {}
+  regetToken() {}
 
   getPlaylists(token: string) {}
 
-  getPlaylistDetail(token: string, playlistID: string): PlaylistDetail {
-    let detail = new PlaylistDetail();
+  getPlaylistDetail(token: string, playlistID: string): Observable<TubeDetail> {
+    let detail = {} as TubeDetail;
 
     return detail;
   }
