@@ -1,30 +1,14 @@
-export interface PageInfo {
-  totalResults: number;
-  resultsPerPage: number;
-}
+import {
+  ThumbnailDefault,
+  ThumbnailMedium,
+  ThumbnailHigh,
+  PageInfo,
+} from './ThumbnailDefault';
 
-export interface Default {
-  url: string;
-  width: number;
-  height: number;
-}
-
-export interface Medium {
-  url: string;
-  width: number;
-  height: number;
-}
-
-export interface High {
-  url: string;
-  width: number;
-  height: number;
-}
-
-export interface Thumbnails {
-  default: Default;
-  medium: Medium;
-  high: High;
+export interface PlayListDetailThumbnails {
+  default: ThumbnailDefault;
+  medium: ThumbnailMedium;
+  high: ThumbnailHigh;
 }
 
 export interface ResourceId {
@@ -32,23 +16,23 @@ export interface ResourceId {
   videoId: string;
 }
 
-export interface Snippet {
+export interface PlayListDetailSnippet {
   publishedAt: Date;
   channelId: string;
   title: string;
   description: string;
-  thumbnails: Thumbnails;
+  thumbnails: PlayListDetailThumbnails;
   channelTitle: string;
   playlistId: string;
   position: number;
   resourceId: ResourceId;
 }
 
-interface Item {
+export interface PlayListDetailItem {
   kind: string;
   etag: string;
   id: string;
-  snippet: Snippet;
+  snippet: PlayListDetailSnippet;
 }
 
 export interface PlayListDetail {
@@ -56,5 +40,5 @@ export interface PlayListDetail {
   etag: string;
   nextPageToken: string;
   pageInfo: PageInfo;
-  items: Item[];
+  items: PlayListDetailItem[];
 }

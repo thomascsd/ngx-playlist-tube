@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { TubeDetail } from '../models/TubeDetail';
 import { environment } from '../../../environments/environment.prod';
 import { AppToken } from '../models/AppToken';
+import { PlayListDetail } from '../models/PlaylistDetail';
 
 const appscopes = [
   encodeURIComponent('https://www.googleapis.com/auth/youtube'),
@@ -19,6 +20,10 @@ export class YoutubeServiceService {
   clientID: string;
   secretID: string;
   host: string;
+  isBusy = false;
+  position = 0;
+  totalResults = 0;
+  pageToken = '';
 
   constructor(private client: HttpClient) {
     this.host = environment.host;
@@ -103,6 +108,33 @@ export class YoutubeServiceService {
 
   getPlaylistDetail(token: string, playlistID: string): Observable<TubeDetail> {
     let detail = {} as TubeDetail;
+
+    if (this.isBusy) {
+      return;
+    }
+    this.isBusy = true;
+
+    if (
+      this.totalResults !== 0 &&
+      this.position !== 0 &&
+      this.position === this.totalResults - 1
+    ) {
+      //目前item的index到達集合的長度時，不取得資料
+      this.isBusy = false;
+      return;
+    }
+
+    let url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=15&playlistId=${playlistID}&access_token=${token}`;
+
+    if (this.pageToken) {
+      url += '&pageToken=' + this.pageToken;
+    }
+
+    this.client.get<PlayListDetail>(url).pipe(
+      map((data) => {
+        return {};
+      })
+    );
 
     return detail;
   }

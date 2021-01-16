@@ -1,62 +1,46 @@
-interface PageInfo {
-  totalResults: number;
-  resultsPerPage: number;
-}
+import {
+  ThumbnailDefault,
+  ThumbnailMedium,
+  ThumbnailHigh,
+  PageInfo,
+} from './ThumbnailDefault';
 
-interface Default {
+export interface Standard {
   url: string;
   width: number;
   height: number;
 }
 
-interface Medium {
+export interface Maxres {
   url: string;
   width: number;
   height: number;
 }
 
-interface High {
-  url: string;
-  width: number;
-  height: number;
-}
-
-interface Standard {
-  url: string;
-  width: number;
-  height: number;
-}
-
-interface Maxres {
-  url: string;
-  width: number;
-  height: number;
-}
-
-interface Thumbnails {
-  default: Default;
-  medium: Medium;
-  high: High;
+export interface PlayListThumbnails {
+  default: ThumbnailDefault;
+  medium: ThumbnailMedium;
+  high: ThumbnailHigh;
   standard: Standard;
   maxres: Maxres;
 }
 
-interface Localized {
+export interface Localized {
   title: string;
   description: string;
 }
 
-interface Snippet {
+export interface PlayListSnippet {
   publishedAt: Date;
   channelId: string;
   title: string;
   description: string;
-  thumbnails: Thumbnails;
+  thumbnails: PlayListThumbnails;
   channelTitle: string;
   localized: Localized;
 }
 
-interface ContentDetails {
+export interface ContentDetails {
   itemCount: number;
 }
 
@@ -64,7 +48,7 @@ export interface PlayListItem {
   kind: string;
   etag: string;
   id: string;
-  snippet: Snippet;
+  snippet: PlayListSnippet;
   contentDetails: ContentDetails;
 }
 
