@@ -52,13 +52,13 @@ export interface PlayListItem {
   contentDetails: ContentDetails;
 }
 
-export interface PLayList {
+export interface PlayList {
   kind: string;
   etag: string;
   pageInfo: PageInfo;
   items: PlayListItem[];
 }
 
-export interface PLayListRoot {
-  data: PLayList;
+export interface PlayListRoot {
+  data: PlayList;
 }

@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { TubeDetail } from '../models/TubeDetail';
 import { environment } from '../../../environments/environment.prod';
 import { AppToken } from '../models/AppToken';
 import { PlayListDetailRoot } from '../models/PlaylistDetail';
+import { PlayListRoot } from '../models/PlayList';
 
 const appscopes = [
   encodeURIComponent('https://www.googleapis.com/auth/youtube'),
@@ -16,7 +17,7 @@ const appscopes = [
 @Injectable({
   providedIn: 'root',
 })
-export class YoutubeServiceService {
+export class YoutubeService {
   clientID: string;
   secretID: string;
   host: string;
@@ -108,7 +109,13 @@ export class YoutubeServiceService {
 
   regetToken() {}
 
-  getPlaylists(token: string) {}
+  getPlaylists(token: string): Observable<PlayListRoot> {
+    const url =
+      'https://www.googleapis.com/youtube/v3/playlists?part=snippet%2CcontentDetails&mine=true&access_token=' +
+      token;
+
+    return this.client.get<PlayListRoot>(url);
+  }
 
   getPlaylistDetail(token: string, playlistID: string) {
     if (this.tubeDetail.isBusy) {
