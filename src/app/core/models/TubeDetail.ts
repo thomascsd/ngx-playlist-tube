@@ -1,8 +1,9 @@
+import { PlayListDetailItem } from './PlaylistDetail';
+
 export interface TubeDetail {
   pageToken: string;
   isBusy: boolean;
-  token: string;
-  playlistID: string;
   totalResults: number;
   position: number;
+  items: PlayListDetailItem[];
 }

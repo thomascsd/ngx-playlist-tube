@@ -58,3 +58,7 @@ export interface PLayList {
   pageInfo: PageInfo;
   items: PlayListItem[];
 }
+
+export interface PLayListRoot {
+  data: PLayList;
+}

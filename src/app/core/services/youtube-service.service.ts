@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { TubeDetail } from '../models/TubeDetail';
 import { environment } from '../../../environments/environment.prod';
 import { AppToken } from '../models/AppToken';
-import { PlayListDetail } from '../models/PlaylistDetail';
+import { PlayListDetailRoot } from '../models/PlaylistDetail';
 
 const appscopes = [
   encodeURIComponent('https://www.googleapis.com/auth/youtube'),
@@ -20,10 +20,14 @@ export class YoutubeServiceService {
   clientID: string;
   secretID: string;
   host: string;
-  isBusy = false;
-  position = 0;
-  totalResults = 0;
-  pageToken = '';
+
+  tubeDetail: TubeDetail = {
+    isBusy: false,
+    position: 0,
+    totalResults: 0,
+    pageToken: '',
+    items: [],
+  };
 
   constructor(private client: HttpClient) {
     this.host = environment.host;
@@ -106,36 +110,47 @@ export class YoutubeServiceService {
 
   getPlaylists(token: string) {}
 
-  getPlaylistDetail(token: string, playlistID: string): Observable<TubeDetail> {
-    let detail = {} as TubeDetail;
-
-    if (this.isBusy) {
+  getPlaylistDetail(token: string, playlistID: string) {
+    if (this.tubeDetail.isBusy) {
       return;
     }
-    this.isBusy = true;
+    this.tubeDetail.isBusy = true;
 
     if (
-      this.totalResults !== 0 &&
-      this.position !== 0 &&
-      this.position === this.totalResults - 1
+      this.tubeDetail.totalResults !== 0 &&
+      this.tubeDetail.position !== 0 &&
+      this.tubeDetail.position === this.tubeDetail.totalResults - 1
     ) {
       //目前item的index到達集合的長度時，不取得資料
-      this.isBusy = false;
+      this.tubeDetail.isBusy = false;
       return;
     }
 
     let url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=15&playlistId=${playlistID}&access_token=${token}`;
 
-    if (this.pageToken) {
-      url += '&pageToken=' + this.pageToken;
+    if (this.tubeDetail.pageToken) {
+      url += '&pageToken=' + this.tubeDetail.pageToken;
     }
 
-    this.client.get<PlayListDetail>(url).pipe(
-      map((data) => {
-        return {};
-      })
-    );
+    this.client
+      .get<PlayListDetailRoot>(url)
+      .pipe(
+        tap(() => (this.tubeDetail.isBusy = false)),
+        map((root: PlayListDetailRoot) => {
+          const yitems = root.data.items;
+          const lastItem = yitems[yitems.length - 1];
 
-    return detail;
+          return {
+            items: [...this.tubeDetail.items, ...yitems],
+            pageToken: root.data.nextPageToken,
+            totalResults: root.data.pageInfo.totalResults,
+            position: lastItem.snippet.position,
+          } as TubeDetail;
+        })
+      )
+      .subscribe(
+        (tubeDetail: TubeDetail) =>
+          (this.tubeDetail = { ...this.tubeDetail, ...tubeDetail })
+      );
   }
 }

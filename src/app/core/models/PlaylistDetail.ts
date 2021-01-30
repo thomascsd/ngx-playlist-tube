@@ -42,3 +42,7 @@ export interface PlayListDetail {
   pageInfo: PageInfo;
   items: PlayListDetailItem[];
 }
+
+export interface PlayListDetailRoot {
+  data: PlayListDetail;
+}
