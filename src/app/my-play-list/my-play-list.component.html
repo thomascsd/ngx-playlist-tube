@@ -1,10 +1,19 @@
-<!-- <mat-list>
-  <mat-list-item *ngFor="let item of playListItem$ | async">
-    <img matListAvatar src="..." alt="..." />
-    <h3 matLine>{{ item. }}</h3>
+<mat-list>
+  <mat-list-item *ngFor="let item of playListItems$ | async; last as isLast">
+    <img
+      matListAvatar
+      src="{{ item.snippet.thumbnails.default.url }}"
+      alt="{{ item.snippet.title }}"
+    />
     <p matLine>
-      <span> {{ message.subject }} </span>
-      <span class="demo-2"> -- {{ message.content }} </span>
+      <span> {{ item.snippet.title }} </span>
     </p>
+    <mat-icon
+      aria-hidden="false"
+      aria-label="playlist_add"
+      (click)="addItem(item)"
+      >playlist_add</mat-icon
+    >
+    <mat-divider *ngIf="!isLast"></mat-divider>
   </mat-list-item>
-</mat-list> -->
+</mat-list>

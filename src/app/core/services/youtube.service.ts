@@ -6,7 +6,7 @@ import { TubeDetail } from '../models/TubeDetail';
 import { environment } from '../../../environments/environment.prod';
 import { AppToken } from '../models/AppToken';
 import { PlayListDetailRoot } from '../models/PlaylistDetail';
-import { PlayListRoot } from '../models/PlayList';
+import { PlayListItem, PlayListRoot } from '../models/PlayList';
 
 const appscopes = [
   encodeURIComponent('https://www.googleapis.com/auth/youtube'),
@@ -109,12 +109,14 @@ export class YoutubeService {
 
   regetToken() {}
 
-  getPlaylists(token: string): Observable<PlayListRoot> {
+  getPlaylistItems(token: string): Observable<PlayListItem[]> {
     const url =
       'https://www.googleapis.com/youtube/v3/playlists?part=snippet%2CcontentDetails&mine=true&access_token=' +
       token;
 
-    return this.client.get<PlayListRoot>(url);
+    return this.client
+      .get<PlayListRoot>(url)
+      .pipe(map((root) => root.data.items));
   }
 
   getPlaylistDetail(token: string, playlistID: string) {

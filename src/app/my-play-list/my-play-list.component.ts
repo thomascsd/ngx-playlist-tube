@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { YoutubeService } from '../core/services/youtube.service';
-import { PlayListRoot, PlayListItem } from '../core/models/PlayList';
+import { PlayListItem } from '../core/models/PlayList';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { UserDataService } from '../core/services/user-data.service';
 
 @Component({
   selector: 'app-my-play-list',
@@ -10,15 +10,18 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./my-play-list.component.scss'],
 })
 export class MyPlayListComponent implements OnInit {
-  playListItem$: Observable<PlayListItem[]>;
+  playListItems$: Observable<PlayListItem[]>;
 
-  constructor(private youtubeService: YoutubeService) {}
+  constructor(
+    private youtubeService: YoutubeService,
+    private userDataService: UserDataService
+  ) {}
 
   ngOnInit(): void {}
 
-  getPlaylists(token: string) {
-    this.playListItem$ = this.youtubeService
-      .getPlaylists(token)
-      .pipe(map((root) => root.data.items));
+  addItem(item: PlayListItem) {}
+
+  getPlaylistItems(token: string) {
+    this.playListItems$ = this.youtubeService.getPlaylistItems(token);
   }
 }

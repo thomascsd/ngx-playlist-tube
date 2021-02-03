@@ -6,7 +6,7 @@ const TOKEN_NAME = 'npt-token';
 @Injectable({
   providedIn: 'root',
 })
-export class UserDataServiceService {
+export class UserDataService {
   tokenSubject$ = new BehaviorSubject<string>(
     window.localStorage.getItem(TOKEN_NAME)
   );
@@ -17,5 +17,6 @@ export class UserDataServiceService {
 
   setToken(token: string) {
     this.tokenSubject$.next(token);
+    window.localStorage.setItem(TOKEN_NAME, token);
   }
 }
