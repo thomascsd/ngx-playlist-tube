@@ -19,7 +19,9 @@ export class MyPlayListComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  addItem(item: PlayListItem) {}
+  addItem(item: PlayListItem) {
+    this.userDataService.addUserList('P', item);
+  }
 
   getPlaylistItems(token: string) {
     this.playListItems$ = this.youtubeService.getPlaylistItems(token);
