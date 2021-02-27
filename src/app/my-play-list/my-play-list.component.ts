@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { YoutubeService } from '../core/services/youtube.service';
 import { PlayListItem } from '../core/models/PlayList';
 import { Observable } from 'rxjs';
-import { UserDataService } from '../core/services/user-data.service';
+import {
+  UserDataService,
+  PLAYLIST_TYPE,
+} from '../core/services/user-data.service';
 
 @Component({
   selector: 'app-my-play-list',
@@ -20,7 +23,7 @@ export class MyPlayListComponent implements OnInit {
   ngOnInit(): void {}
 
   addItem(item: PlayListItem) {
-    this.userDataService.addUserList('P', item);
+    this.userDataService.addUserList(PLAYLIST_TYPE, item);
   }
 
   getPlaylistItems(token: string) {

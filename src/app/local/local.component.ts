@@ -1,6 +1,9 @@
-import { PlayListItem } from './../core/models/PlayList';
 import { Component, OnInit } from '@angular/core';
-import { UserDataService } from './../core/services/user-data.service';
+import { PlayListItem } from './../core/models/PlayList';
+import {
+  UserDataService,
+  PLAYLIST_TYPE,
+} from './../core/services/user-data.service';
 
 @Component({
   selector: 'app-local',
@@ -8,9 +11,15 @@ import { UserDataService } from './../core/services/user-data.service';
   styleUrls: ['./local.component.scss'],
 })
 export class LocalComponent implements OnInit {
+  playListItems: PlayListItem[] = [];
+
   constructor(private userDataService: UserDataService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.playListItems = this.userDataService.getUserList()[PLAYLIST_TYPE];
+  }
 
-  delete(item: PlayListItem) {}
+  delete(item: PlayListItem) {
+    this.userDataService.deleteUserList(PLAYLIST_TYPE, item);
+  }
 }

@@ -1,10 +1,13 @@
+import { PlayListItem } from './../models/PlayList';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import * as _ from 'lodash';
-import { PlayListItem } from '../models/PlayList';
 
 const TOKEN_NAME = 'npx-token';
 const USER_LIST_NAME = 'npx-user-list';
+
+export const PLAYLIST_TYPE = 'p';
+export const VIDEO_TYPE = 'v';
 
 @Injectable({
   providedIn: 'root',
@@ -56,5 +59,14 @@ export class UserDataService {
 
   getUserList() {
     return this.userListSubject$.value;
+  }
+
+  deleteUserList(type: string, item: PlayListItem) {
+    let userList = this.getUserList();
+
+    userList[type] = _.without(userList[type], item);
+
+    this.userListSubject$.next(userList);
+    window.localStorage.setItem(USER_LIST_NAME, JSON.stringify(userList));
   }
 }
