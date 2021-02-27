@@ -2,7 +2,10 @@
   <a href="javascript:void(0)" ng-click="vm.clear()">clear</a>
 </div>
 <mat-list>
-  <mat-list-item *ngFor="let item of playListItems; last as isLast">
+  <mat-list-item
+    *ngFor="let item of playListItems; last as isLast"
+    (click)="goToDetail(item)"
+  >
     <img
       matListAvatar
       src="{{ item.snippet.thumbnails.default.url }}"

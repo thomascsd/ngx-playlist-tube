@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { YoutubeService } from '../core/services/youtube.service';
 import { PlayListItem } from '../core/models/PlayList';
 import { Observable } from 'rxjs';
@@ -17,7 +18,8 @@ export class MyPlayListComponent implements OnInit {
 
   constructor(
     private youtubeService: YoutubeService,
-    private userDataService: UserDataService
+    private userDataService: UserDataService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {}
@@ -28,5 +30,9 @@ export class MyPlayListComponent implements OnInit {
 
   getPlaylistItems(token: string) {
     this.playListItems$ = this.youtubeService.getPlaylistItems(token);
+  }
+
+  goToDetail(item: PlayListItem) {
+    this.router.navigate(['detail', item.id]);
   }
 }

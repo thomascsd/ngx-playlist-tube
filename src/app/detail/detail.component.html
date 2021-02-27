@@ -1,0 +1,43 @@
+<!-- <md-toolbar>
+  <div class="md-toolbar-tools">
+    <md-button ng-click="vm.goBack()">
+      <md-icon>arrow_back</md-icon>
+    </md-button>
+    <h2>
+      <span>{{ vm.title }}</span>
+    </h2>
+    <span flex></span>
+  </div>
+</md-toolbar>
+<md-progress-linear
+  md-mode="indeterminate"
+  ng-show="vm.detail.isBusy"
+></md-progress-linear>
+<md-content layout-padding>
+  <div
+    layout="row"
+    layout-align="center center"
+    infinite-scroll="vm.detail.list()"
+    infinite-scroll-disabled="vm.detail.isBusy"
+    infinite-scroll-distance="1"
+  >
+    <md-list flex="90">
+      <md-list-item
+        ng-repeat="item in vm.detail.items"
+        ng-click="vm.playVideo(item)"
+      >
+        <img
+          src="{{ item.snippet.thumbnails.default.url }}"
+          alt=""
+          class="md-avatar"
+        />
+        <p class="title">
+          {{ item.snippet.title }}
+        </p>
+        <md-divider ng-if="!$last"></md-divider>
+      </md-list-item>
+    </md-list>
+  </div>
+</md-content> -->
+
+<mat-toolbar> </mat-toolbar>

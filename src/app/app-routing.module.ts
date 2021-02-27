@@ -1,10 +1,16 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { MyPlayListComponent } from './my-play-list/my-play-list.component';
+import { LocalComponent } from './local/local.component';
 
-const routes: Routes = [];
+const routes: Routes = [
+  { path: '', redirectTo: 'local', pathMatch: 'full' },
+  { path: 'myPlayList', component: MyPlayListComponent },
+  { path: 'local/:id', component: LocalComponent },
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

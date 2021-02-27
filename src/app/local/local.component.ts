@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { PlayListItem } from './../core/models/PlayList';
 import {
   UserDataService,
@@ -13,7 +14,10 @@ import {
 export class LocalComponent implements OnInit {
   playListItems: PlayListItem[] = [];
 
-  constructor(private userDataService: UserDataService) {}
+  constructor(
+    private userDataService: UserDataService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.playListItems = this.userDataService.getUserList()[PLAYLIST_TYPE];
@@ -21,5 +25,9 @@ export class LocalComponent implements OnInit {
 
   delete(item: PlayListItem) {
     this.userDataService.deleteUserList(PLAYLIST_TYPE, item);
+  }
+
+  goToDetail(item: PlayListItem) {
+    this.router.navigate(['detail', item.id]);
   }
 }

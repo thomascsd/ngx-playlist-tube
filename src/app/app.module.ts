@@ -9,6 +9,7 @@ import { MaterialModule } from './material/material.module';
 import { HomeComponent } from './home/home.component';
 import { LocalComponent } from './local/local.component';
 import { MyPlayListComponent } from './my-play-list/my-play-list.component';
+import { DetailComponent } from './detail/detail.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { MyPlayListComponent } from './my-play-list/my-play-list.component';
     HomeComponent,
     LocalComponent,
     MyPlayListComponent,
+    DetailComponent,
   ],
   imports: [
     BrowserModule,
