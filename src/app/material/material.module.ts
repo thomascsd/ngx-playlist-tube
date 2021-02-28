@@ -4,6 +4,8 @@ import { MatToolbarModule } from '@angular/material/toolBar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/List';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   imports: [
@@ -12,8 +14,17 @@ import { MatListModule } from '@angular/material/List';
     MatTabsModule,
     MatIconModule,
     MatListModule,
+    MatButtonModule,
+    MatProgressBarModule,
   ],
   declarations: [],
-  exports: [MatToolbarModule, MatTabsModule, MatIconModule, MatListModule],
+  exports: [
+    MatToolbarModule,
+    MatTabsModule,
+    MatIconModule,
+    MatListModule,
+    MatButtonModule,
+    MatProgressBarModule,
+  ],
 })
 export class MaterialModule {}

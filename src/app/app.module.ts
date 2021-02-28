@@ -10,6 +10,7 @@ import { HomeComponent } from './home/home.component';
 import { LocalComponent } from './local/local.component';
 import { MyPlayListComponent } from './my-play-list/my-play-list.component';
 import { DetailComponent } from './detail/detail.component';
+import { VideoComponent } from './video/video.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { DetailComponent } from './detail/detail.component';
     LocalComponent,
     MyPlayListComponent,
     DetailComponent,
+    VideoComponent,
   ],
   imports: [
     BrowserModule,
