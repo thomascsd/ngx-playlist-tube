@@ -51,7 +51,12 @@
   mode="indeterminate"
   ngStyle="{'none': !tubeDetail?.isBusy}"
 ></mat-progress-bar>
-<div>
+<div
+  infiniteScroll
+  [infiniteScrollDistance]="1"
+  [infiniteScrollDisabled]="tubeDetail?.isBusy"
+  (scrolled)="list()"
+>
   <mat-list>
     <mat-list-item
       *ngFor="let item of tubeDetail?.items; last as isLast"
