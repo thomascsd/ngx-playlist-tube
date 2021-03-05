@@ -2,6 +2,7 @@ import { PlayListItem } from './../models/PlayList';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import * as _ from 'lodash';
+import { CurrentData } from '../models/CurrentData';
 
 const TOKEN_NAME = 'npx-token';
 const USER_LIST_NAME = 'npx-user-list';
@@ -13,35 +14,33 @@ export const VIDEO_TYPE = 'v';
   providedIn: 'root',
 })
 export class UserDataService {
-  private tokenSubject$ = new BehaviorSubject<string>(
-    window.localStorage.getItem(TOKEN_NAME)
+  private tokenSubject$ = new BehaviorSubject<string>(window.localStorage.getItem(TOKEN_NAME));
+
+  private userListSubject$ = new BehaviorSubject<Record<string, PlayListItem[]>>(
+    JSON.parse(window.localStorage.getItem(USER_LIST_NAME))
   );
 
-  private userListSubject$ = new BehaviorSubject<
-    Record<string, PlayListItem[]>
-  >(JSON.parse(window.localStorage.getItem(USER_LIST_NAME)));
+  private currentPlayListSubject$ = new BehaviorSubject<Partial<CurrentData>>({});
 
-  private currentDetailSubject$ = new BehaviorSubject<any>({});
-
-  private currentVideoSubject$ = new BehaviorSubject<any>({});
+  private currentVideoSubject$ = new BehaviorSubject<Partial<CurrentData>>({});
 
   token$ = this.tokenSubject$.asObservable();
 
   constructor() {}
 
-  get currentDetail() {
-    return this.currentDetailSubject$.value;
+  getCurrentPlayList() {
+    return this.currentPlayListSubject$.asObservable();
   }
 
-  set currentDetail(value: any) {
-    this.currentDetailSubject$.next(value);
+  set currentPlayList(value: Partial<CurrentData>) {
+    this.currentPlayListSubject$.next(value);
   }
 
-  get currentVideo() {
-    return this.currentVideoSubject$.value;
+  getCurrentVideo() {
+    return this.currentVideoSubject$.asObservable();
   }
 
-  set currentVideo(value: any) {
+  set currentVideo(value: Partial<CurrentData>) {
     this.currentVideoSubject$.next(value);
   }
 

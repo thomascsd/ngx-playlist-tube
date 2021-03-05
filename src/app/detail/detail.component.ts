@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { zip } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UserDataService } from './../core/services/user-data.service';
 import { YoutubeService } from '../core/services/youtube.service';
 import { TubeDetail } from '../core/models/TubeDetail';
 import { PlayListDetailItem } from '../core/models/PlaylistDetail';
+import { CurrentData } from '../core/models/CurrentData';
 
 @Component({
   selector: 'app-detail',
@@ -17,7 +18,6 @@ export class DetailComponent implements OnInit {
   tubeDetail: TubeDetail;
 
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private userService: UserDataService,
     private youtubeService: YoutubeService
@@ -28,10 +28,12 @@ export class DetailComponent implements OnInit {
   }
 
   list() {
-    zip([this.userService.token$, this.route.params])
+    zip([this.userService.token$, this.userService.getCurrentPlayList()])
       .pipe(
-        map(([token, params]) => {
-          const id = params['id'] as string;
+        map(([token, currentData]) => {
+          const data: CurrentData = currentData as CurrentData;
+          const id = data.id;
+          this.title = data.title;
           this.youtubeService.getPlaylistDetail(token as string, id);
           return this.youtubeService.tubeDetail;
         })
@@ -42,6 +44,11 @@ export class DetailComponent implements OnInit {
   }
 
   goToVideo(item: PlayListDetailItem) {
+    this.userService.currentVideo = {
+      id: item.snippet.resourceId.videoId,
+      index: item.snippet.position,
+      title: item.snippet.title,
+    };
     this.router.navigate(['video']);
   }
 }

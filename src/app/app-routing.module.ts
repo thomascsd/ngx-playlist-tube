@@ -6,7 +6,7 @@ import { LocalComponent } from './local/local.component';
 const routes: Routes = [
   { path: '', redirectTo: 'local', pathMatch: 'full' },
   { path: 'myPlayList', component: MyPlayListComponent },
-  { path: 'local/:id', component: LocalComponent },
+  { path: 'local', component: LocalComponent },
 ];
 
 @NgModule({

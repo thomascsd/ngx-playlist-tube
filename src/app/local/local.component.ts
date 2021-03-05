@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PlayListItem } from './../core/models/PlayList';
-import {
-  UserDataService,
-  PLAYLIST_TYPE,
-} from './../core/services/user-data.service';
+import { UserDataService, PLAYLIST_TYPE } from './../core/services/user-data.service';
 
 @Component({
   selector: 'app-local',
@@ -14,10 +11,7 @@ import {
 export class LocalComponent implements OnInit {
   playListItems: PlayListItem[] = [];
 
-  constructor(
-    private userDataService: UserDataService,
-    private router: Router
-  ) {}
+  constructor(private userDataService: UserDataService, private router: Router) {}
 
   ngOnInit(): void {
     this.playListItems = this.userDataService.getUserList()[PLAYLIST_TYPE];
@@ -28,6 +22,10 @@ export class LocalComponent implements OnInit {
   }
 
   goToDetail(item: PlayListItem) {
-    this.router.navigate(['detail', item.id]);
+    this.userDataService.currentPlayList = {
+      id: item.id,
+      title: item.snippet.title,
+    };
+    this.router.navigate(['detail']);
   }
 }

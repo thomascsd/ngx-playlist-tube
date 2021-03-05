@@ -1,0 +1,14 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+$npt-app-primary: mat-palette($mat-purple);
+$npt-app-accent: mat-palette($mat-brown);
+$npt-app-theme: mat-light-theme(
+  (
+    color: (
+      primary: $npt-app-primary,
+      accent: $npt-app-accent,
+    ),
+  )
+);
+@include angular-material-theme($npt-app-theme);

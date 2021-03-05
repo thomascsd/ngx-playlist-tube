@@ -3,10 +3,7 @@ import { Router } from '@angular/router';
 import { YoutubeService } from '../core/services/youtube.service';
 import { PlayListItem } from '../core/models/PlayList';
 import { Observable } from 'rxjs';
-import {
-  UserDataService,
-  PLAYLIST_TYPE,
-} from '../core/services/user-data.service';
+import { UserDataService, PLAYLIST_TYPE } from '../core/services/user-data.service';
 
 @Component({
   selector: 'app-my-play-list',
@@ -33,7 +30,11 @@ export class MyPlayListComponent implements OnInit {
   }
 
   goToDetail(item: PlayListItem) {
-    this.router.navigate(['detail', item.id]);
+    this.userDataService.currentPlayList = {
+      id: item.id,
+      title: item.snippet.title,
+    };
+    this.router.navigate(['detail']);
   }
 
   login() {
