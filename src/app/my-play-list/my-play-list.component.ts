@@ -35,4 +35,8 @@ export class MyPlayListComponent implements OnInit {
   goToDetail(item: PlayListItem) {
     this.router.navigate(['detail', item.id]);
   }
+
+  login() {
+    this.youtubeService.login();
+  }
 }

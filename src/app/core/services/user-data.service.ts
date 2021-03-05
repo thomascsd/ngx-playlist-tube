@@ -21,9 +21,29 @@ export class UserDataService {
     Record<string, PlayListItem[]>
   >(JSON.parse(window.localStorage.getItem(USER_LIST_NAME)));
 
+  private currentDetailSubject$ = new BehaviorSubject<any>({});
+
+  private currentVideoSubject$ = new BehaviorSubject<any>({});
+
   token$ = this.tokenSubject$.asObservable();
 
   constructor() {}
+
+  get currentDetail() {
+    return this.currentDetailSubject$.value;
+  }
+
+  set currentDetail(value: any) {
+    this.currentDetailSubject$.next(value);
+  }
+
+  get currentVideo() {
+    return this.currentVideoSubject$.value;
+  }
+
+  set currentVideo(value: any) {
+    this.currentVideoSubject$.next(value);
+  }
 
   setToken(token: string) {
     this.tokenSubject$.next(token);

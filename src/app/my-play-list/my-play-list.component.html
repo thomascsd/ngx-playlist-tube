@@ -20,3 +20,6 @@
     <mat-divider *ngIf="!isLast"></mat-divider>
   </mat-list-item>
 </mat-list>
+<div style.display="{'none': (playListItems$ | async).length !== 0}">
+  <button mat-raised-button color="primary" (click)="login()">Login</button>
+</div>
