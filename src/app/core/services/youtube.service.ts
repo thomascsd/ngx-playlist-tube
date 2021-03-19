@@ -7,12 +7,16 @@ import { environment } from '../../../environments/environment.prod';
 import { AppToken } from '../models/AppToken';
 import { PlayListDetailRoot } from '../models/PlaylistDetail';
 import { PlayListItem, PlayListRoot } from '../models/PlayList';
+import { RemoteLibraryService } from './remote-library.service';
 
 const appscopes = [
   encodeURIComponent('https://www.googleapis.com/auth/youtube'),
   encodeURIComponent('https://www.googleapis.com/auth/youtube.readonly'),
   encodeURIComponent('https://www.googleapis.com/auth/youtubepartner'),
 ];
+
+declare var gapi;
+type authorized = (isAuthorized: boolean) => any;
 
 @Injectable({
   providedIn: 'root',
@@ -30,58 +34,59 @@ export class YoutubeService {
     items: [],
   };
 
-  constructor(private client: HttpClient) {
+  private GoogleAuth: any;
+  private updateSigninStatus: authorized;
+
+  constructor(private client: HttpClient, private remoteService: RemoteLibraryService) {
     this.host = environment.host;
   }
 
-  login() {
-    let requestToken = '';
-    const url =
-      'https://accounts.google.com/o/oauth2/v2/auth?client_id=' +
-      this.clientID +
-      '&redirect_uri=' +
-      this.host +
-      '/callback&scope=' +
-      appscopes.join(' ') +
-      '&approval_prompt=force&response_type=code&access_type=offline';
-
-    window.location.href = url;
+  loadGapi(updateStatus: authorized) {
+    this.updateSigninStatus = updateStatus;
+    this.remoteService.loadScript('https://apis.google.com/js/api.js').subscribe(() => {
+      this.handleClientLoad();
+    });
   }
 
-  getToken(requestToken: string): Observable<AppToken> {
-    const url = 'https://www.googleapis.com/oauth2/v4/token';
+  handleClientLoad() {
+    // Load the API's client and auth2 modules.
+    // Call the initClient function after the modules load.
+    gapi.load('client:auth2', this.initClient);
+  }
 
-    if (!requestToken) {
-      const url = window.location.href;
-      requestToken = url.split('code=')[1];
-    }
+  initClient() {
+    // In practice, your app can retrieve one or more discovery documents.
+    const discoveryUrl = 'https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest';
+    const scope = appscopes.join(' ');
 
-    const body = {
-      client_id: this.clientID,
-      client_secret: this.secretID,
-      redirect_uri: this.host,
-      grant_type: 'authorization_code',
-      code: requestToken,
-    };
-
-    return this.client.post<any>(url, body).pipe(
-      map((data) => {
-        let time = new Date();
-        const hour = data.expires_in / (60 * 60);
-        time.setHours(time.getHours() + hour);
-
-        return {
-          token: data.access_token as string,
-          refreshToken: data.refresh_token as string,
-          expire: time,
-        } as AppToken;
+    // Initialize the gapi.client object, which app uses to make API requests.
+    // Get API key and client ID from API Console.
+    // 'scope' field specifies space-delimited list of access scopes.
+    gapi.client
+      .init({
+        apiKey: 'YOUR_API_KEY',
+        clientId: 'YOUR_CLIENT_ID',
+        discoveryDocs: [discoveryUrl],
+        scope: scope,
       })
-    );
+      .then(() => {
+        this.GoogleAuth = gapi.auth2.getAuthInstance();
+        const user = this.GoogleAuth.currentUser.get();
+        var isAuthorized: boolean = user.hasGrantedScopes(scope);
+
+        // Listen for sign-in state changes.
+        this.GoogleAuth.isSignedIn.listen(this.updateSigninStatus.bind(this, isAuthorized));
+
+        // setSigninStatus();
+      });
   }
 
-  isLogingIn() {
-    const url = window.location.href;
-    return url.indexOf('callback') !== -1;
+  login() {
+    this.GoogleAuth.signIn();
+  }
+
+  isLoggedIn() {
+    return this.GoogleAuth.isSignedIn.get();
   }
 
   isExpired(data) {
@@ -107,16 +112,12 @@ export class YoutubeService {
     return false;
   }
 
-  regetToken() {}
-
   getPlaylistItems(token: string): Observable<PlayListItem[]> {
     const url =
       'https://www.googleapis.com/youtube/v3/playlists?part=snippet%2CcontentDetails&mine=true&access_token=' +
       token;
 
-    return this.client
-      .get<PlayListRoot>(url)
-      .pipe(map((root) => root.data.items));
+    return this.client.get<PlayListRoot>(url).pipe(map((root) => root.data.items));
   }
 
   getPlaylistDetail(token: string, playlistID: string) {
@@ -158,8 +159,7 @@ export class YoutubeService {
         })
       )
       .subscribe(
-        (tubeDetail: TubeDetail) =>
-          (this.tubeDetail = { ...this.tubeDetail, ...tubeDetail })
+        (tubeDetail: TubeDetail) => (this.tubeDetail = { ...this.tubeDetail, ...tubeDetail })
       );
   }
 }

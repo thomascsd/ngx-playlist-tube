@@ -11,15 +11,12 @@
     <p matLine>
       <span> {{ item.snippet.title }} </span>
     </p>
-    <mat-icon
-      aria-hidden="false"
-      aria-label="playlist_add"
-      (click)="addItem(item)"
+    <mat-icon aria-hidden="false" aria-label="playlist_add" (click)="addItem(item)"
       >playlist_add</mat-icon
     >
     <mat-divider *ngIf="!isLast"></mat-divider>
   </mat-list-item>
 </mat-list>
-<div style.display="{'none': (playListItems$ | async).length !== 0}">
+<div style.display="{'none': isLoggedIn">
   <button mat-raised-button color="primary" (click)="login()">Login</button>
 </div>
