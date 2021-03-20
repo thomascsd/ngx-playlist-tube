@@ -1,4 +1,4 @@
-<div class="flex">
+<section class="flex flex-col justify-start h-screen">
   <mat-list>
     <mat-list-item
       *ngFor="let item of playListItems$ | async; last as isLast"
@@ -18,7 +18,7 @@
       <mat-divider *ngIf="!isLast"></mat-divider>
     </mat-list-item>
   </mat-list>
-  <div style.display="{'none': isLoggedIn}">
+  <div class="self-center" style.display="{'none': isLoggedIn}">
     <button mat-raised-button color="primary" (click)="login()">Login</button>
   </div>
-</div>
+</section>
