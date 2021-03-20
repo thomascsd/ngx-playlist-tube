@@ -3,16 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { TubeDetail } from '../models/TubeDetail';
-import { environment } from '../../../environments/environment.prod';
-import { AppToken } from '../models/AppToken';
+import { environment } from '../../../environments/environment';
 import { PlayListDetailRoot } from '../models/PlaylistDetail';
 import { PlayListItem, PlayListRoot } from '../models/PlayList';
 import { RemoteLibraryService } from './remote-library.service';
 
 const appscopes = [
-  encodeURIComponent('https://www.googleapis.com/auth/youtube'),
-  encodeURIComponent('https://www.googleapis.com/auth/youtube.readonly'),
-  encodeURIComponent('https://www.googleapis.com/auth/youtubepartner'),
+  'https://www.googleapis.com/auth/youtube',
+  'https://www.googleapis.com/auth/youtube.readonly',
+  'https://www.googleapis.com/auth/youtubepartner',
 ];
 
 declare var gapi;
@@ -51,7 +50,7 @@ export class YoutubeService {
   handleClientLoad() {
     // Load the API's client and auth2 modules.
     // Call the initClient function after the modules load.
-    gapi.load('client:auth2', this.initClient);
+    gapi.load('client:auth2', this.initClient.bind(this));
   }
 
   initClient() {
@@ -64,8 +63,8 @@ export class YoutubeService {
     // 'scope' field specifies space-delimited list of access scopes.
     gapi.client
       .init({
-        apiKey: 'YOUR_API_KEY',
-        clientId: 'YOUR_CLIENT_ID',
+        apiKey: environment.googleApiKey,
+        clientId: environment.googleClientId,
         discoveryDocs: [discoveryUrl],
         scope: scope,
       })

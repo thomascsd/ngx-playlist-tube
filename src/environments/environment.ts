@@ -5,6 +5,8 @@
 export const environment = {
   host: 'http://localhost:4200',
   production: false,
+  googleApiKey: process.env.GOOGLE_APIKEY,
+  googleClientId: process.env.GOOGLE_CLIENTID,
 };
 
 /*
