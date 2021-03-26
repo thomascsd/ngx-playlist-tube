@@ -8,7 +8,7 @@
   </mat-toolbar>
   <mat-progress-bar
     mode="indeterminate"
-    style.display="{'none': !tubeDetail?.isBusy}"
+    [style.display]="{ none: !tubeDetail?.isBusy }"
   ></mat-progress-bar>
   <div
     infiniteScroll

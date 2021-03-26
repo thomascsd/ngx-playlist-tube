@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { YoutubeService } from '../core/services/youtube.service';
 import { PlayListItem } from '../core/models/PlayList';
 import { UserDataService, PLAYLIST_TYPE } from '../core/services/user-data.service';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-my-play-list',
@@ -24,7 +25,9 @@ export class MyPlayListComponent implements OnInit, AfterViewInit {
     this.youtubeService.loadGapi(this.updateStatus);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.userDataService.token$.pipe(tap((token) => this.getPlaylistItems(token)));
+  }
 
   updateStatus(isAuthorized: boolean) {
     this.isLoggedIn = isAuthorized;
@@ -47,6 +50,9 @@ export class MyPlayListComponent implements OnInit, AfterViewInit {
   }
 
   login() {
-    this.youtubeService.login();
+    this.youtubeService.login().subscribe((token: string) => {
+      this.userDataService.setToken(token);
+      this.getPlaylistItems(token);
+    });
   }
 }

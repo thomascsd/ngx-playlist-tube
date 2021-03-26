@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { TubeDetail } from '../models/TubeDetail';
 import { environment } from '../../../environments/environment';
-import { PlayListDetailRoot } from '../models/PlaylistDetail';
-import { PlayListItem, PlayListRoot } from '../models/PlayList';
+import { PlayListDetail } from '../models/PlaylistDetail';
+import { PlayListItem, PlayList } from '../models/PlayList';
 import { RemoteLibraryService } from './remote-library.service';
 
 const appscopes = [
@@ -43,17 +43,11 @@ export class YoutubeService {
   loadGapi(updateStatus: authorized) {
     this.updateSigninStatus = updateStatus;
     this.remoteService.loadScript('https://apis.google.com/js/api.js').subscribe(() => {
-      this.handleClientLoad();
+      gapi.load('client:auth2', this.initClient.bind(this));
     });
   }
 
-  handleClientLoad() {
-    // Load the API's client and auth2 modules.
-    // Call the initClient function after the modules load.
-    gapi.load('client:auth2', this.initClient.bind(this));
-  }
-
-  initClient() {
+  private initClient() {
     // In practice, your app can retrieve one or more discovery documents.
     const discoveryUrl = 'https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest';
     const scope = appscopes.join(' ');
@@ -80,8 +74,13 @@ export class YoutubeService {
       });
   }
 
-  login() {
-    this.GoogleAuth.signIn();
+  login(): Observable<string> {
+    return new Observable<string>((subscriber) => {
+      this.GoogleAuth.signIn().then((res) => {
+        subscriber.next(res.getAuthResponse().access_token);
+        subscriber.complete();
+      });
+    });
   }
 
   isLoggedIn() {
@@ -116,7 +115,7 @@ export class YoutubeService {
       'https://www.googleapis.com/youtube/v3/playlists?part=snippet%2CcontentDetails&mine=true&access_token=' +
       token;
 
-    return this.client.get<PlayListRoot>(url).pipe(map((root) => root.data.items));
+    return this.client.get<PlayList>(url).pipe(map((root) => root.items));
   }
 
   getPlaylistDetail(token: string, playlistID: string) {
@@ -142,17 +141,17 @@ export class YoutubeService {
     }
 
     this.client
-      .get<PlayListDetailRoot>(url)
+      .get<PlayListDetail>(url)
       .pipe(
         tap(() => (this.tubeDetail.isBusy = false)),
-        map((root: PlayListDetailRoot) => {
-          const yitems = root.data.items;
+        map((data: PlayListDetail) => {
+          const yitems = data.items;
           const lastItem = yitems[yitems.length - 1];
 
           return {
             items: [...this.tubeDetail.items, ...yitems],
-            pageToken: root.data.nextPageToken,
-            totalResults: root.data.pageInfo.totalResults,
+            pageToken: data.nextPageToken,
+            totalResults: data.pageInfo.totalResults,
             position: lastItem.snippet.position,
           } as TubeDetail;
         })

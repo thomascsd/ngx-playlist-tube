@@ -18,7 +18,7 @@
       <mat-divider *ngIf="!isLast"></mat-divider>
     </mat-list-item>
   </mat-list>
-  <div class="self-center" style.display="{'none': isLoggedIn}">
+  <div class="self-center" [style.display]="{ none: isLoggedIn }">
     <button mat-raised-button color="primary" (click)="login()">Login</button>
   </div>
 </section>

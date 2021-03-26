@@ -1,9 +1,4 @@
-import {
-  ThumbnailDefault,
-  ThumbnailMedium,
-  ThumbnailHigh,
-  PageInfo,
-} from './ThumbnailDefault';
+import { ThumbnailDefault, ThumbnailMedium, ThumbnailHigh, PageInfo } from './ThumbnailDefault';
 
 export interface Standard {
   url: string;
@@ -57,8 +52,4 @@ export interface PlayList {
   etag: string;
   pageInfo: PageInfo;
   items: PlayListItem[];
-}
-
-export interface PlayListRoot {
-  data: PlayList;
 }

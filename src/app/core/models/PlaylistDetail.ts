@@ -1,9 +1,4 @@
-import {
-  ThumbnailDefault,
-  ThumbnailMedium,
-  ThumbnailHigh,
-  PageInfo,
-} from './ThumbnailDefault';
+import { ThumbnailDefault, ThumbnailMedium, ThumbnailHigh, PageInfo } from './ThumbnailDefault';
 
 export interface PlayListDetailThumbnails {
   default: ThumbnailDefault;
@@ -41,8 +36,4 @@ export interface PlayListDetail {
   nextPageToken: string;
   pageInfo: PageInfo;
   items: PlayListDetailItem[];
-}
-
-export interface PlayListDetailRoot {
-  data: PlayListDetail;
 }
