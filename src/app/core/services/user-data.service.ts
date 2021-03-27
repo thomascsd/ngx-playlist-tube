@@ -1,11 +1,12 @@
-import { PlayListItem } from './../models/PlayList';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import * as _ from 'lodash';
 import { CurrentData } from '../models/CurrentData';
+import { PlayListItem } from '../models/PlayList';
 
 const TOKEN_NAME = 'npx-token';
 const USER_LIST_NAME = 'npx-user-list';
+const C_USER_LIST = 'npx-C-user-list';
 
 export const PLAYLIST_TYPE = 'p';
 export const VIDEO_TYPE = 'v';
@@ -20,7 +21,9 @@ export class UserDataService {
     JSON.parse(window.localStorage.getItem(USER_LIST_NAME))
   );
 
-  private currentPlayListSubject$ = new BehaviorSubject<Partial<CurrentData>>({});
+  private currentPlayListSubject$ = new BehaviorSubject<Partial<CurrentData>>(
+    JSON.parse(window.sessionStorage.getItem(C_USER_LIST))
+  );
 
   private currentVideoSubject$ = new BehaviorSubject<Partial<CurrentData>>({});
 
@@ -34,6 +37,7 @@ export class UserDataService {
 
   set currentPlayList(value: Partial<CurrentData>) {
     this.currentPlayListSubject$.next(value);
+    sessionStorage.setItem(C_USER_LIST, JSON.stringify(value));
   }
 
   getCurrentVideo() {
@@ -78,6 +82,17 @@ export class UserDataService {
 
   getUserList() {
     return this.userListSubject$.value;
+  }
+
+  getUserListByKey(key: string) {
+    const userList = this.getUserList();
+    let items: PlayListItem[] = [];
+
+    if (userList && Object.keys(userList)) {
+      items = userList[key];
+    }
+
+    return items;
   }
 
   deleteUserList(type: string, item: PlayListItem) {
