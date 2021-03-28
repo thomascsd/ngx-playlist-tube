@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { zip } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { UserDataService } from './../core/services/user-data.service';
-import { YoutubeService } from '../core/services/youtube.service';
-import { TubeDetail } from '../core/models/TubeDetail';
-import { PlayListDetailItem } from '../core/models/PlaylistDetail';
-import { CurrentData } from '../core/models/CurrentData';
+import { UserDataService } from '../../core/services/user-data.service';
+import { YoutubeService } from '../../core/services/youtube.service';
+import { TubeDetail } from '../../core/models/TubeDetail';
+import { PlayListDetailItem } from '../../core/models/PlaylistDetail';
+import { CurrentData } from '../../core/models/CurrentData';
 
 @Component({
   selector: 'app-detail',
