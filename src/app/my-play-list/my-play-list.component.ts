@@ -26,7 +26,9 @@ export class MyPlayListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.userDataService.token$.pipe(tap((token) => this.getPlaylistItems(token)));
+    this.userDataService.token$.subscribe((token) => {
+      this.getPlaylistItems(token);
+    });
   }
 
   updateStatus(isAuthorized: boolean) {

@@ -28,7 +28,7 @@ export class DetailComponent implements OnInit {
   }
 
   list() {
-    zip([this.userService.token$, this.userService.getCurrentPlayList()])
+    zip(this.userService.token$, this.userService.getCurrentPlayList())
       .pipe(
         map(([token, currentData]) => {
           const data: CurrentData = currentData as CurrentData;

@@ -14,7 +14,7 @@ export class LocalComponent implements OnInit {
   constructor(private userDataService: UserDataService, private router: Router) {}
 
   ngOnInit(): void {
-    this.playListItems = this.userDataService.getUserList()[PLAYLIST_TYPE];
+    this.playListItems = this.userDataService.getUserListByKey(PLAYLIST_TYPE);
   }
 
   delete(item: PlayListItem) {
