@@ -1,10 +1,10 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { zip } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { YoutubeService } from '../core/services/youtube.service';
 import { PlayListItem } from '../core/models/PlayList';
 import { UserDataService, PLAYLIST_TYPE } from '../core/services/user-data.service';
-import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-my-play-list',
@@ -24,9 +24,11 @@ export class MyPlayListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {}
 
   ngOnInit(): void {
-    this.userDataService.token$.subscribe((token) => {
-      this.getPlaylistItems(token);
-    });
+    zip(this.userDataService.token$, this.youtubeService.loadGapi())
+      .pipe(map(([token, _]) => token))
+      .subscribe((token) => {
+        this.getPlaylistItems(token);
+      });
   }
 
   addItem(item: PlayListItem) {
