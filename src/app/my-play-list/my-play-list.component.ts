@@ -12,7 +12,7 @@ import { tap } from 'rxjs/operators';
   styleUrls: ['./my-play-list.component.scss'],
 })
 export class MyPlayListComponent implements OnInit, AfterViewInit {
-  playListItems$: Observable<PlayListItem[]>;
+  playListItems: PlayListItem[] = [];
   isLoggedIn: boolean;
 
   constructor(
@@ -21,9 +21,7 @@ export class MyPlayListComponent implements OnInit, AfterViewInit {
     private router: Router
   ) {}
 
-  ngAfterViewInit(): void {
-    this.youtubeService.loadGapi(this.updateStatus);
-  }
+  ngAfterViewInit(): void {}
 
   ngOnInit(): void {
     this.userDataService.token$.subscribe((token) => {
@@ -31,16 +29,12 @@ export class MyPlayListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  updateStatus(isAuthorized: boolean) {
-    this.isLoggedIn = isAuthorized;
-  }
-
   addItem(item: PlayListItem) {
     this.userDataService.addUserList(PLAYLIST_TYPE, item);
   }
 
   getPlaylistItems(token: string) {
-    this.playListItems$ = this.youtubeService.getPlaylistItems(token);
+    this.youtubeService.getPlaylistItems(token).subscribe((items) => (this.playListItems = items));
   }
 
   goToDetail(item: PlayListItem) {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 import { TubeDetail } from '../models/TubeDetail';
 import { environment } from '../../../environments/environment';
 import { PlayListDetail } from '../models/PlaylistDetail';
@@ -33,45 +33,45 @@ export class YoutubeService {
     items: [],
   };
 
-  private GoogleAuth: any;
+  GoogleAuth: any;
   private updateSigninStatus: authorized;
 
   constructor(private client: HttpClient, private remoteService: RemoteLibraryService) {
     this.host = environment.host;
+    this.loadGapi();
   }
 
-  loadGapi(updateStatus: authorized) {
-    this.updateSigninStatus = updateStatus;
-    this.remoteService.loadScript('https://apis.google.com/js/api.js').subscribe(() => {
-      gapi.load('client:auth2', this.initClient.bind(this));
-    });
-  }
-
-  private initClient() {
-    // In practice, your app can retrieve one or more discovery documents.
+  loadGapi(): Observable<any> {
     const discoveryUrl = 'https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest';
     const scope = appscopes.join(' ');
 
-    // Initialize the gapi.client object, which app uses to make API requests.
-    // Get API key and client ID from API Console.
-    // 'scope' field specifies space-delimited list of access scopes.
-    gapi.client
-      .init({
-        apiKey: environment.googleApiKey,
-        clientId: environment.googleClientId,
-        discoveryDocs: [discoveryUrl],
-        scope: scope,
-      })
-      .then(() => {
-        this.GoogleAuth = gapi.auth2.getAuthInstance();
-        const user = this.GoogleAuth.currentUser.get();
-        var isAuthorized: boolean = user.hasGrantedScopes(scope);
+    if (this.GoogleAuth) {
+      return of(this.GoogleAuth);
+    }
 
-        // Listen for sign-in state changes.
-        this.GoogleAuth.isSignedIn.listen(this.updateSigninStatus.bind(this, isAuthorized));
+    return new Observable<any>((subscriber) => {
+      this.remoteService.loadScript('https://apis.google.com/js/api.js').subscribe(() => {
+        gapi.load('client:auth2', () => {
+          gapi.client
+            .init({
+              apiKey: environment.googleApiKey,
+              clientId: environment.googleClientId,
+              discoveryDocs: [discoveryUrl],
+              scope: scope,
+            })
+            .then(() => {
+              this.GoogleAuth = gapi.auth2.getAuthInstance();
+              const user = this.GoogleAuth.currentUser.get();
+              var isAuthorized: boolean = user.hasGrantedScopes(scope);
 
-        // setSigninStatus();
+              // Listen for sign-in state changes.
+              //this.GoogleAuth.isSignedIn.listen(this.updateSigninStatus.bind(this, isAuthorized));
+              subscriber.next(this.GoogleAuth);
+              subscriber.complete();
+            });
+        });
       });
+    });
   }
 
   login(): Observable<string> {
@@ -115,7 +115,22 @@ export class YoutubeService {
       'https://www.googleapis.com/youtube/v3/playlists?part=snippet%2CcontentDetails&mine=true&access_token=' +
       token;
 
-    return this.client.get<PlayList>(url).pipe(map((root) => root.items));
+    return this.client
+      .get<PlayListItem[]>(url, {
+        observe: 'response',
+      })
+      .pipe(
+        map((res) => {
+          return res.body;
+        }),
+        catchError((err) => {
+          if (err.status === 401) {
+            const then = this.GoogleAuth.disconnect();
+            console.log(then);
+          }
+          return of([]);
+        })
+      );
   }
 
   getPlaylistDetail(token: string, playlistID: string) {
