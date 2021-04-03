@@ -115,22 +115,23 @@ export class YoutubeService {
       'https://www.googleapis.com/youtube/v3/playlists?part=snippet%2CcontentDetails&mine=true&access_token=' +
       token;
 
-    return this.client
-      .get<PlayListItem[]>(url, {
-        observe: 'response',
-      })
-      .pipe(
-        map((res) => {
-          return res.body;
-        }),
-        catchError((err) => {
-          if (err.status === 401) {
-            const then = this.GoogleAuth.disconnect();
-            console.log(then);
-          }
-          return of([]);
-        })
-      );
+    return this.client.get<PlayList>(url).pipe(map((root) => root.items));
+    // return this.client
+    //   .get<PlayListItem[]>(url, {
+    //     observe: 'response',p
+    //   })
+    //   .pipe(
+    //     map((res) => {
+    //       return res.body;
+    //     }),
+    //     catchError((err) => {
+    //       if (err.status === 401) {
+    //         const then = this.GoogleAuth.disconnect();
+    //         console.log(then);
+    //       }
+    //       return of([]);
+    //     })
+    //   );
   }
 
   getPlaylistDetail(token: string, playlistID: string) {
