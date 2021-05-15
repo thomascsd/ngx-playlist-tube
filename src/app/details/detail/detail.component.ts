@@ -3,8 +3,7 @@ import { Router } from '@angular/router';
 import { zip } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UserDataService } from '../../core/services/user-data.service';
-import { YoutubeService } from '../../core/services/youtube.service';
-import { TubeDetail } from '../../core/models/TubeDetail';
+import { ListDetailService } from '../../core/services/list-detail.service';
 import { PlayListDetailItem } from '../../core/models/PlaylistDetail';
 import { CurrentData } from '../../core/models/CurrentData';
 
@@ -15,12 +14,12 @@ import { CurrentData } from '../../core/models/CurrentData';
 })
 export class DetailComponent implements OnInit {
   title: string = '';
-  tubeDetail: TubeDetail;
+  items: PlayListDetailItem[] = [];
 
   constructor(
     private router: Router,
     private userService: UserDataService,
-    private youtubeService: YoutubeService
+    public listDetailService: ListDetailService
   ) {}
 
   ngOnInit(): void {
@@ -34,13 +33,11 @@ export class DetailComponent implements OnInit {
           const data: CurrentData = currentData as CurrentData;
           const id = data.id;
           this.title = data.title;
-          this.youtubeService.getPlaylistDetail(token as string, id);
-          return this.youtubeService.tubeDetail;
+          this.listDetailService.getPlaylistDetail(token as string, id);
+          return this.listDetailService.items;
         })
       )
-      .subscribe((tb) => {
-        this.tubeDetail = tb;
-      });
+      .subscribe((items) => (this.items = items));
   }
 
   goToVideo(item: PlayListDetailItem) {

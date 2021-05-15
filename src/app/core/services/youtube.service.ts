@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { TubeDetail } from '../models/TubeDetail';
 import { environment } from '../../../environments/environment';
-import { PlayListDetail } from '../models/PlaylistDetail';
 import { PlayListItem, PlayList } from '../models/PlayList';
 import { RemoteLibraryService } from './remote-library.service';
 
@@ -24,14 +22,6 @@ export class YoutubeService {
   clientID: string;
   secretID: string;
   host: string;
-
-  tubeDetail: TubeDetail = {
-    isBusy: false,
-    position: 0,
-    totalResults: 0,
-    pageToken: '',
-    items: [],
-  };
 
   GoogleAuth: any;
   private updateSigninStatus: authorized;
@@ -132,48 +122,5 @@ export class YoutubeService {
     //       return of([]);
     //     })
     //   );
-  }
-
-  getPlaylistDetail(token: string, playlistID: string) {
-    if (this.tubeDetail.isBusy) {
-      return;
-    }
-    this.tubeDetail.isBusy = true;
-
-    if (
-      this.tubeDetail.totalResults !== 0 &&
-      this.tubeDetail.position !== 0 &&
-      this.tubeDetail.position === this.tubeDetail.totalResults - 1
-    ) {
-      //目前item的index到達集合的長度時，不取得資料
-      this.tubeDetail.isBusy = false;
-      return;
-    }
-
-    let url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=15&playlistId=${playlistID}&access_token=${token}`;
-
-    if (this.tubeDetail.pageToken) {
-      url += '&pageToken=' + this.tubeDetail.pageToken;
-    }
-
-    this.client
-      .get<PlayListDetail>(url)
-      .pipe(
-        tap(() => (this.tubeDetail.isBusy = false)),
-        map((data: PlayListDetail) => {
-          const yitems = data.items;
-          const lastItem = yitems[yitems.length - 1];
-
-          return {
-            items: [...this.tubeDetail.items, ...yitems],
-            pageToken: data.nextPageToken,
-            totalResults: data.pageInfo.totalResults,
-            position: lastItem.snippet.position,
-          } as TubeDetail;
-        })
-      )
-      .subscribe(
-        (tubeDetail: TubeDetail) => (this.tubeDetail = { ...this.tubeDetail, ...tubeDetail })
-      );
   }
 }
