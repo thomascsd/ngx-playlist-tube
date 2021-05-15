@@ -26,9 +26,7 @@ export class MyPlayListComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     zip(this.userDataService.token$, this.youtubeService.loadGapi())
       .pipe(map(([token, _]) => token))
-      .subscribe((token) => {
-        this.getPlaylistItems(token);
-      });
+      .subscribe((token) => this.getPlaylistItems(token));
   }
 
   addItem(item: PlayListItem) {

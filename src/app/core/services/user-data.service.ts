@@ -60,6 +60,7 @@ export class UserDataService {
 
     if (!userList) {
       userList = {};
+      userList[key] = [];
       userList[key].push(item);
       added = true;
     } else {
