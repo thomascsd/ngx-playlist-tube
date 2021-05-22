@@ -1,0 +1,9 @@
+<!--shuffle-->
+<div>
+  <a href="javascript:void(0)" (click)="doShuffle()" *ngIf="shuffleNoneVisible">
+    <mat-icon aria-hidden="false" aria-label="shuffle" class="cursor-pointer">shuffle</mat-icon>
+  </a>
+  <a href="javascript:void(0)" (click)="doShuffleNone()" *ngIf="shuffleVisible">
+    <mat-icon aria-hidden="false" aria-label="shuffle" class="cursor-pointer">shuffle</mat-icon>
+  </a>
+</div>
