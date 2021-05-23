@@ -1,1 +1,30 @@
-<section></section>
+<section class="flex flex-col justify-start h-screen">
+  <mat-toolbar>
+    <button mat-icon-button aria-label="back">
+      <mat-icon>arrow_back_ios_new</mat-icon>
+    </button>
+    <h2>{{ title }}</h2>
+    <span></span>
+  </mat-toolbar>
+  <div class="flex flex-col">
+    <app-tube-youtube #player [playlistId]="playlistId" [index]="index"></app-tube-youtube>
+    <div class="flex flex-row justify-between">
+      <section>
+        <app-tube-shuffle></app-tube-shuffle>
+      </section>
+      <section>
+        <app-tube-repeat></app-tube-repeat>
+      </section>
+      <section>
+        <a href="javascript:void(0);" (click)="prev()">
+          <mat-icon>fast_forward</mat-icon>
+        </a>
+      </section>
+      <section>
+        <a href="javascript:void(0)" (click)="next()">
+          <mat-icon>fast_rewind</mat-icon>
+        </a>
+      </section>
+    </div>
+  </div>
+</section>

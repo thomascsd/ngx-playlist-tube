@@ -48,8 +48,8 @@ export class TubeYoutubeComponent implements AfterViewInit {
     player.setLoop(false);
   }
 
-  shuffle(e, data) {
-    player.setShuffle(data);
+  shuffle(isShuffle: boolean) {
+    player.setShuffle(isShuffle);
   }
 
   ngAfterViewInit(): void {
