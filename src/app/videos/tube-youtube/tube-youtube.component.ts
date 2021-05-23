@@ -9,7 +9,13 @@ import {
 } from '@angular/core';
 import { RemoteLibraryService } from '../../core/services/remote-library.service';
 
-declare var YT;
+declare global {
+  interface Window {
+    YT: any;
+    onYouTubeIframeAPIReady: (() => void) | undefined;
+  }
+}
+
 let player: any = null;
 let enableRepeatOne = false;
 
@@ -58,6 +64,17 @@ export class TubeYoutubeComponent implements AfterViewInit {
   }
 
   private loadCompletely() {
+    if (player) {
+      // console.log('plyaer is not null, videoid:' + this.videoid);
+      this.init();
+    } else {
+      window.onYouTubeIframeAPIReady = () => {
+        this.init();
+      };
+    }
+  }
+
+  private init() {
     //var $container; //$(element).parents('.container');
     let width = 600; //$container.width();
     let height = 0;
@@ -67,11 +84,9 @@ export class TubeYoutubeComponent implements AfterViewInit {
     }
     height = width * (3 / 4);
 
-    player = new YT.Player('player', {
+    player = new window.YT.Player('player', {
       playerVars: {
-        autoplay: 1,
-        html5: 1,
-        modesbranding: 0,
+        modestbranding: 0,
         showinfo: 0,
         controls: 1,
       },
@@ -83,15 +98,6 @@ export class TubeYoutubeComponent implements AfterViewInit {
       },
       //videoId: scope.videoid
     });
-
-    // if (player) {
-    //   console.log('plyaer is not null, videoid:' + scope.videoid);
-    //   init();
-    // } else {
-    //   $window.onYouTubeIframeAPIReady = function () {
-    //     init();
-    //   };
-    // }
   }
 
   private playerReadyHandler() {
@@ -104,7 +110,7 @@ export class TubeYoutubeComponent implements AfterViewInit {
   }
 
   private playerStateChangeHandler(e) {
-    if (e.data === YT.PlayerState.ENDED) {
+    if (e.data === window.YT.PlayerState.ENDED) {
       var pos = player.getPlaylistIndex();
       if (enableRepeatOne) {
         player.playVideoAt(pos - 1);
